@@ -1,0 +1,10 @@
+The following implementations are required:
+COMPLETE    -Decks and cards should be structs
+COMPLETE    -A new deck should be shuffled and played as soon as one deck has exhausted all of its cards
+    -Player has the options to stand, hit, double down
+    -Money tracking, earning, and betting system
+    -Dealer stands on a 15
+    -Play stops on a dealer natural 21
+
+OPTIONAL Extras:
+    -Add a split mechanic
