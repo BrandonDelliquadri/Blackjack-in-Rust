@@ -62,6 +62,14 @@ impl Card{
         let rank: String = char_to_string(self.rank);
         print!("{} of {}", rank, suit);
     }
+
+    pub fn card_value (& self) -> u32{
+        if self.rank == 'Q' || self.rank == 'K' || self.rank == 'J' || self.rank == 'T'{10} 
+        else if self.rank == 'A'{11}
+        else{
+            self.rank.to_digit(10).unwrap()
+        }
+    }
 }
 
 pub fn char_to_string(char: char) -> String{
@@ -101,7 +109,9 @@ fn main() {
     let mut count = 0u32;
     loop{
         count +=1;
-        game_deck.draw().print_card();
+        let tempCard = game_deck.draw();
+        tempCard.print_card();
+        print!("        This card's value is {}", tempCard.card_value());
         println!();
         if count ==100{
             break;
