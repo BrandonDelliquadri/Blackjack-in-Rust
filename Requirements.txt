@@ -3,8 +3,22 @@ COMPLETE    -Decks and cards should be structs
 COMPLETE    -A new deck should be shuffled and played as soon as one deck has exhausted all of its cards
     -Player has the options to stand, hit, double down
     -Money tracking, earning, and betting system
-    -Dealer stands on a 15
+    -Dealer stands on a 17 or greater
     -Play stops on a dealer natural 21
 
 OPTIONAL Extras:
     -Add a split mechanic
+    -Add multiple decks shuffling at a time (similar to modern casinos)
+
+
+Game Loop:
+    -Players get one card
+    -Dealer gets a card last
+    -Players get second card
+    -Dealer gets second card
+    -Check for blackjack
+    -Ask players hit, stand, double down
+    -IF double down give player one last card
+    -IF stand deal no more cards to player
+    -IF hit deal a card to player and ask hit or stand again
+    -Finally dealer plays until standing on 17+ or busting

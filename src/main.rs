@@ -5,14 +5,15 @@ use std::string;
 
 use rand::seq::SliceRandom;
 use rand::rng;
+use std::io;
 
-#[derive(Debug)]
-struct Card {
+#[derive(Debug, Copy, Clone)]
+pub struct Card {
     suit: char,
     rank: char,
 }
 
-struct Deck{
+pub struct Deck{
     pub deck: Vec<Card>,
 }
 
@@ -47,9 +48,9 @@ impl Deck{
         }
     }
 
-    pub fn print_deck(&self){
-        println!("\nCurrent Deck: {:?}", self.deck);
-    }
+    // pub fn print_deck(&self){
+    //     println!("\nCurrent Deck: {:?}", self.deck);
+    // }
 }
 
 impl Card{
@@ -95,6 +96,45 @@ pub fn char_to_string(char: char) -> String{
         String::from(char)
     }
 }
+
+pub fn get_input() -> String{
+    let mut user_input = String::new();
+    io::stdin()
+        .read_line(&mut user_input)
+        .expect("Failed to read line");
+    let trimmed_input = user_input.trim().to_string();
+    trimmed_input
+}
+
+pub fn dealer_draw(){
+    print!("The dealer draws himself a ");
+}
+
+pub fn player_draw(){
+    print!("The dealer draws you a ");
+}
+
+pub fn game_loop(deck: &mut Deck){
+    loop{
+        println!("Please press 1 and enter to start a new game:");
+        let mut player_hand: Vec<Card> = Vec::new();
+        let mut dealer_hand: Vec<Card> = Vec::new();
+        let trimmed_input = get_input();
+        if trimmed_input == "1"{
+            println!("\"Let's get this started\" says the dealer.");
+            player_draw();
+            let current_card = deck.draw();
+            player_hand.push(current_card);
+            current_card.print_card();
+            println!("\n");
+        }else{
+            break;
+        }
+
+    }
+    
+}
+
 fn main() {
     let mut game_deck = Deck::new();
     game_deck.populate_deck();
@@ -106,16 +146,17 @@ fn main() {
     println!("* * * * * * * * * * * * * * * * * * * * * * * * * * * *");
     println!("* * * * * * * * * * * * * * * * * * * * * * * * * * * *");
 
-    let mut count = 0u32;
-    loop{
-        count +=1;
-        let tempCard = game_deck.draw();
-        tempCard.print_card();
-        print!("        This card's value is {}", tempCard.card_value());
-        println!();
-        if count ==100{
-            break;
-        }
-    }
+    game_loop(&mut game_deck);
+    // let mut count = 0u32;
+    // loop{
+    //     count +=1;
+    //     let temp_card = game_deck.draw();
+    //     temp_card.print_card();
+    //     print!("        This card's value is {}", temp_card.card_value());
+    //     println!();
+    //     if count ==100{
+    //         break;
+    //     }
+    // }
     
 }
