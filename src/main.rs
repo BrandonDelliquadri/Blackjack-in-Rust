@@ -47,10 +47,6 @@ impl Deck{
             self.deck.pop().unwrap()
         }
     }
-
-    // pub fn print_deck(&self){
-    //     println!("\nCurrent Deck: {:?}", self.deck);
-    // }
 }
 
 impl Card{
@@ -106,27 +102,86 @@ pub fn get_input() -> String{
     trimmed_input
 }
 
-pub fn dealer_draw(){
-    print!("The dealer draws himself a ");
+
+pub fn print_hand(hand: &Vec<Card>){
+    print!("You peer down at your hand. You have the following cards: ");
+    for x in hand{
+        println!();
+        x.print_card();
+    }
+    println!();
 }
 
-pub fn player_draw(){
+pub fn dealer_draw(deck: &mut Deck, first_draw: bool) -> Card{
+    let current_card = deck.draw();
+    if first_draw == true{print!("The dealer draws himself a card face down.");}
+    else{
+        print!("The dealer draws himself a ");
+        current_card.print_card();
+    }
+
+    println!("\n");
+    current_card
+}
+
+pub fn player_draw(deck: &mut Deck) -> Card{
     print!("The dealer draws you a ");
+    let current_card = deck.draw();
+    current_card.print_card();
+    println!("\n");
+    current_card
+}
+
+pub fn card_sum(cards: Vec<Card>) -> u32{
+    let mut card_sum: u32 = 0;
+    for x in cards.iter(){
+        card_sum += x.card_value();
+    }
+    card_sum
 }
 
 pub fn game_loop(deck: &mut Deck){
     loop{
-        println!("Please press 1 and enter to start a new game:");
+        println!("Please press enter to start a new game:");
         let mut player_hand: Vec<Card> = Vec::new();
         let mut dealer_hand: Vec<Card> = Vec::new();
         let trimmed_input = get_input();
-        if trimmed_input == "1"{
-            println!("\"Let's get this started\" says the dealer.");
-            player_draw();
-            let current_card = deck.draw();
-            player_hand.push(current_card);
-            current_card.print_card();
+        if trimmed_input == ""{
+            println!("\"Let's get this started\" says the dealer.\n\n");
+            player_hand.push(player_draw(deck));
+            dealer_hand.push(dealer_draw(deck, true));
+            dealer_hand.push(dealer_draw(deck, false));
             println!("\n");
+            loop{
+                println!("\nChoose from the following options:\n1)Look at your hand\n2)Look at dealer's showing card\n3)Hit\n4)Stand");
+                let player_choice = get_input();
+                if player_choice == "1"{    //Display the current player's hand
+                    print_hand(&player_hand);
+                }
+                if player_choice == "2"{    //Display the dealer's face up card
+                    print!("You look over at the dealer. ");
+                    if dealer_hand[dealer_hand.len()-1].card_value() == 10{
+                        print!("He looks back at you bored as if he has seen this exact moment millions of times. ");
+                    }
+                    else if dealer_hand[dealer_hand.len()-1].card_value() == 11{
+                        print!("He looks back at you slyly. Not a hint of worry permiates their aura. ");
+                    }
+                    else{
+                        print!("The dealer looks dissinterested in the game. ");
+                    }
+                    print!("They are showing a ");
+                    dealer_hand[0].print_card();
+                    println!(".");
+
+                }
+                else if player_choice == "3"{  //Draw another card for the player and then loop again
+                    player_hand.push(player_draw(deck)); //should probably check for bust here somehow
+                }
+                else if player_choice == "4"{  //Display the dealer's hand and then draw cards if and until they reach 17+
+                    break;
+                }
+            }
+            
         }else{
             break;
         }
