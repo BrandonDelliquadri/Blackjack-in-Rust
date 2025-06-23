@@ -151,7 +151,23 @@ pub fn game_loop(deck: &mut Deck){
             println!("\"Let's get this started\" says the dealer.\n\n");
             player_hand.push(player_draw(deck));
             dealer_hand.push(dealer_draw(deck, true));
+            player_hand.push(player_draw(deck));
             dealer_hand.push(dealer_draw(deck, false));
+            if hand_value(&player_hand) == 21{
+                println!("\"HEY nice blackjack kid\" says the dealer. They gives their cards a check to see if they has 21....");
+                if hand_value(&dealer_hand)==21{
+                    println!("\"Ah... Sorry to get your hopes up\" they say as they flip their card over to reveal a matching 21. You push.");
+                }
+                else{
+                    println!("You WIN instantly!!");
+                    break;
+                }
+            }
+            else if hand_value(&dealer_hand) == 21{
+                println!("\"Sorry kid I got 21. Better luck next time.\" the dealer says as they swipe your cards away from you.");
+                println!("You LOST instantly..");
+                break;
+            }
             println!("\n");
             loop{
                 println!("\nChoose from the following options:\n1)Look at your hand\n2)Look at dealer's showing card\n3)Hit\n4)Stand");
@@ -195,6 +211,11 @@ pub fn game_loop(deck: &mut Deck){
                             }
                         }
                         println!("The dealer gives you a faked sympathetic look. You have lost with a {} against the dealer's {}", player_value, dealer_value);
+                        break;
+                    }
+                    else if player_value == 21{
+                        println!("NICE, you drew your way into a 21!");
+                        println!("YOU WIN !!");
                         break;
                     }
 
