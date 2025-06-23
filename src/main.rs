@@ -132,12 +132,13 @@ pub fn player_draw(deck: &mut Deck) -> Card{
     current_card
 }
 
-pub fn card_sum(cards: Vec<Card>) -> u32{
-    let mut card_sum: u32 = 0;
-    for x in cards.iter(){
-        card_sum += x.card_value();
+
+pub fn hand_value(cards: &Vec<Card>) -> u32{
+    let mut value = 0;
+    for x in cards{
+        value += x.card_value();
     }
-    card_sum
+    value
 }
 
 pub fn game_loop(deck: &mut Deck){
@@ -167,7 +168,7 @@ pub fn game_loop(deck: &mut Deck){
                         print!("He looks back at you slyly. Not a hint of worry permiates their aura. ");
                     }
                     else{
-                        print!("The dealer looks dissinterested in the game. ");
+                        print!("The dealer looks disinterested in the game. ");
                     }
                     print!("They are showing a ");
                     dealer_hand[0].print_card();
@@ -176,8 +177,54 @@ pub fn game_loop(deck: &mut Deck){
                 }
                 else if player_choice == "3"{  //Draw another card for the player and then loop again
                     player_hand.push(player_draw(deck)); //should probably check for bust here somehow
+                    let player_value = hand_value(&player_hand);
+                    if player_value > 21{
+                        println!("You have busted with a hand value of {}", player_value);    //Have dealer play through anyways here similar to option 4
+                        let mut dealer_value = hand_value(&dealer_hand);
+                        loop{
+                            if dealer_value < 17{
+                                let current_card = dealer_draw(deck, false);
+                                dealer_value += current_card.card_value();
+                            }
+                            else if dealer_value > 21{
+                                println!("The dealer busted with a hand value of {}.", dealer_value);
+                            }
+                            else{
+                                println!("The dealer stands with a hand value of {}.", dealer_value);
+                                break;
+                            }
+                        }
+                        println!("The dealer gives you a faked sympathetic look. You have lost with a {} against the dealer's {}", player_value, dealer_value);
+                        break;
+                    }
+
                 }
                 else if player_choice == "4"{  //Display the dealer's hand and then draw cards if and until they reach 17+
+                    let player_value = hand_value(&player_hand);
+                    println!("You stand on a hand value of {}.", player_value);
+                    let mut dealer_value = hand_value(&dealer_hand);
+                    loop{
+                        if dealer_value < 17{
+                            let current_card = dealer_draw(deck, false);
+                            dealer_value += current_card.card_value();
+                        }
+                        else if dealer_value > 21{
+                            println!("The dealer busted with a hand value of {}.", dealer_value);
+                        }
+                        else{
+                            println!("The dealer stands with a hand value of {}.", dealer_value);
+                            break;
+                        }
+                    }
+                    if dealer_value > player_value{
+                        println!("The dealer gives you a faked sympathetic look. You have lost with a {} against the dealer's {}", player_value, dealer_value);
+                    }
+                    else if dealer_value == player_value{
+                        println!("The dealer, bored as ever, stares at the cards on the table. There is a push with you and the dealer having {}", player_value);
+                    }
+                    else{
+                        println!("The dealer gives you an unenthusiastic double thumbs up. You beat the dealer's {} with a {}", dealer_value, player_value);
+                    }
                     break;
                 }
             }
