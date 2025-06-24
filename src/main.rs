@@ -1,10 +1,8 @@
 // Interactive Blackjack game created to learn Rust
 // Developed solely by Brandon David Delliquadri
 
-use std::string;
-
 use rand::seq::SliceRandom;
-use rand::rng;
+use rand::thread_rng;
 use std::io;
 
 #[derive(Debug, Copy, Clone)]
@@ -34,7 +32,7 @@ impl Deck{
     }
 
     fn shuffle(&mut self){   //Randomly reorder the vector
-        let mut rng = rng();
+        let mut rng = thread_rng();
         self.deck.shuffle(&mut rng);
     }
 
@@ -104,7 +102,6 @@ pub fn get_input() -> String{
 
 
 pub fn print_hand(hand: &Vec<Card>){
-    print!("You peer down at your hand. You have the following cards: ");
     for x in hand{
         println!();
         x.print_card();
@@ -135,8 +132,17 @@ pub fn player_draw(deck: &mut Deck) -> Card{
 
 pub fn hand_value(cards: &Vec<Card>) -> u32{
     let mut value = 0;
+    let mut ace_counter = 0;
     for x in cards{
-        value += x.card_value();
+        let cur_card = x.card_value();
+        value += cur_card;
+        if cur_card == 11{ace_counter+=1;}  //handles ace arithmetic
+        while ace_counter>0{
+            if value > 21{
+                value -= 10;
+                ace_counter-=1;
+            }
+        }
     }
     value
 }
@@ -160,6 +166,8 @@ pub fn game_loop(deck: &mut Deck){
                 }
                 else{
                     println!("You WIN instantly!!");
+                    println!("======================================================================================================================================================");
+                    println!("======================================================================================================================================================");
                     break;
                 }
             }
@@ -170,9 +178,11 @@ pub fn game_loop(deck: &mut Deck){
             }
             println!("\n");
             loop{
-                println!("\nChoose from the following options:\n1)Look at your hand\n2)Look at dealer's showing card\n3)Hit\n4)Stand");
+                println!("Choose from the following options:\n1)Look at your hand\n2)Look at dealer's showing card\n3)Hit\n4)Stand");
                 let player_choice = get_input();
+                println!("======================================================================================================================================================");
                 if player_choice == "1"{    //Display the current player's hand
+                    print!("You peer down at your hand. You have the following cards: ");
                     print_hand(&player_hand);
                 }
                 if player_choice == "2"{    //Display the dealer's face up card
@@ -203,10 +213,14 @@ pub fn game_loop(deck: &mut Deck){
                                 dealer_value += current_card.card_value();
                             }
                             else if dealer_value > 21{
+                                print!("The dealer flips over his card showing his previously obscured hand:");
+                                print_hand(&dealer_hand);
                                 println!("The dealer busted with a hand value of {}.", dealer_value);
                             }
                             else{
-                                println!("The dealer stands with a hand value of {}.", dealer_value);
+                                print!("The dealer flips over his card showing his previously obscured hand:");
+                                print_hand(&dealer_hand);
+                                println!("They win with a hand value of {}.", dealer_value);
                                 break;
                             }
                         }
@@ -214,8 +228,12 @@ pub fn game_loop(deck: &mut Deck){
                         break;
                     }
                     else if player_value == 21{
+                        print!("The dealer flips over his card showing his previously obscured hand:");
+                        print_hand(&dealer_hand);
                         println!("NICE, you drew your way into a 21!");
                         println!("YOU WIN !!");
+                        println!("======================================================================================================================================================");
+                        println!("======================================================================================================================================================");
                         break;
                     }
 
@@ -230,14 +248,19 @@ pub fn game_loop(deck: &mut Deck){
                             dealer_value += current_card.card_value();
                         }
                         else if dealer_value > 21{
+                            print!("The dealer flips over his card showing his previously obscured hand:");
+                            print_hand(&dealer_hand);
                             println!("The dealer busted with a hand value of {}.", dealer_value);
+                            break;
                         }
                         else{
+                            print!("The dealer flips over his card showing his previously obscured hand:");
+                            print_hand(&dealer_hand);
                             println!("The dealer stands with a hand value of {}.", dealer_value);
                             break;
                         }
                     }
-                    if dealer_value > player_value{
+                    if dealer_value > player_value && dealer_value <= 21{
                         println!("The dealer gives you a faked sympathetic look. You have lost with a {} against the dealer's {}", player_value, dealer_value);
                     }
                     else if dealer_value == player_value{
@@ -246,6 +269,8 @@ pub fn game_loop(deck: &mut Deck){
                     else{
                         println!("The dealer gives you an unenthusiastic double thumbs up. You beat the dealer's {} with a {}", dealer_value, player_value);
                     }
+                    println!("======================================================================================================================================================");
+                    println!("======================================================================================================================================================");
                     break;
                 }
             }
@@ -259,6 +284,7 @@ pub fn game_loop(deck: &mut Deck){
 }
 
 fn main() {
+
     let mut game_deck = Deck::new();
     game_deck.populate_deck();
     game_deck.shuffle();
@@ -270,16 +296,5 @@ fn main() {
     println!("* * * * * * * * * * * * * * * * * * * * * * * * * * * *");
 
     game_loop(&mut game_deck);
-    // let mut count = 0u32;
-    // loop{
-    //     count +=1;
-    //     let temp_card = game_deck.draw();
-    //     temp_card.print_card();
-    //     print!("        This card's value is {}", temp_card.card_value());
-    //     println!();
-    //     if count ==100{
-    //         break;
-    //     }
-    // }
     
 }
