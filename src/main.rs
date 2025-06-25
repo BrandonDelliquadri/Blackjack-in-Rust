@@ -117,7 +117,7 @@ pub fn dealer_draw(deck: &mut Deck, first_draw: bool) -> Card{
         current_card.print_card();
     }
 
-    println!("\n");
+    println!();
     current_card
 }
 
@@ -176,7 +176,7 @@ pub fn game_loop(deck: &mut Deck){
                 println!("You LOST instantly..");
                 break;
             }
-            println!("\n");
+            println!();
             loop{
                 println!("Choose from the following options:\n1)Look at your hand\n2)Look at dealer's showing card\n3)Hit\n4)Stand");
                 let player_choice = get_input();
